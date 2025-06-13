@@ -5,7 +5,7 @@ require("dotenv").config();
 async function dbConnector(fastify, options) {
   try {
     fastify.log.info("Connecting to MongoDB...");
-    await mongoose.connect(process.env.MONGO_URI, {
+    await mongoose.connect("mongodb+srv://TrainingTrace:2r8bIl867n0J6lOU@trainingtrace.w3mkfb0.mongodb.net/Trainingtrace", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
