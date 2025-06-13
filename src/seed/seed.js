@@ -53,16 +53,16 @@ const seed = async () => {
 
   // Generate random products
   const priceRanges = {
-    "Hot Drinks": [2.0, 5.0],
-    "Cold Drinks": [1.5, 4.5],
-    "Chips": [1.0, 3.0],
-    "Nuts": [2.0, 5.0],
-    "Bread": [2.5, 6.0],
-    "Pastries": [2.0, 4.5],
-    "Milk": [1.0, 3.0],
-    "Cheese": [2.5, 6.0],
-    "Ice Cream": [2.0, 5.0],
-    "Frozen Meals": [3.0, 7.0]
+    "Hot Drinks": [20.0, 500.0],
+    "Cold Drinks": [50.0, 850.0],
+    "Chips": [10.0, 100.0],
+    "Nuts": [200.0, 5000.0],
+    "Bread": [20.0, 300.0],
+    "Pastries": [10.0, 450.0],
+    "Milk": [30.0, 100.0],
+    "Cheese": [25.0, 600.0],
+    "Ice Cream": [20.0, 1000.0],
+    "Frozen Meals": [300.0, 2000.0]
   };
 
   const productNames = {

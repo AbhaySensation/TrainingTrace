@@ -6,33 +6,37 @@ const Product = require('../models/product.model');
 const getAllCategories = async (req, reply) => {
   try {
     const categories = await Category.find().lean();
+    reply.send(categories);
+  } catch (err) {
+    reply.code(500).send({ error: err.message });
+  }
+};
+const getSubcategory = async (req, reply) => {
+  try {
+    const categoryId = req.query.categoryId;
 
-    const subcategories = await Subcategory.find().lean();
-    const products = await Product.find().lean();
-
-    const subMap = {};
-    for (const sub of subcategories) {
-      sub.products = [];
-      subMap[sub._id.toString()] = sub;
+    if (!categoryId) {
+      return reply.code(400).send({ error: "Missing categoryId query parameter" });
     }
 
-    for (const product of products) {
-      const sid = product.subcategory?.toString();
-      if (subMap[sid]) subMap[sid].products.push(product);
+    const subcategories = await Subcategory.find({ category: categoryId }).lean();
+
+    reply.send(subcategories);
+  } catch (err) {
+    reply.code(500).send({ error: err.message });
+  }
+};
+const getProduct = async (req, reply) => {
+  try {
+    const subcategoryId = req.query.Subcategory;
+
+    if (!subcategoryId) {
+      return reply.code(400).send({ error: "Missing subcategory query parameter" });
     }
 
-    const catMap = {};
-    for (const cat of categories) {
-      cat.subcategories = [];
-      catMap[cat._id.toString()] = cat;
-    }
+    const products = await Product.find({ subcategory: subcategoryId },{ name: 1, description: 1, price: 1 }).lean();
 
-    for (const sub of subcategories) {
-      const cid = sub.category?.toString();
-      if (catMap[cid]) catMap[cid].subcategories.push(sub);
-    }
-
-    reply.send(Object.values(catMap));
+    reply.send(products);
   } catch (err) {
     reply.code(500).send({ error: err.message });
   }
@@ -75,5 +79,7 @@ module.exports = {
   getAllCategories,
   createCategory,
   createSubcategory,
-  createProduct
+  createProduct,
+  getSubcategory,
+  getProduct
 };
