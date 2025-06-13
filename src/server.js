@@ -12,7 +12,7 @@ fastify.register(require('./routes/food.routes'));
 // Start Server
 const start = async () => {
   try {
-   const res= await fastify.listen({ port: process.env.PORT || 3000 });
+   const res = await fastify.listen({ port: process.env.PORT || 3000, host: '0.0.0.0' });
     console.log("successfully conneted to port ", res);
   } catch (err) {
     console.log("Failed to register");
