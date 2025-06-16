@@ -1,12 +1,17 @@
+
 const fastify = require("fastify")({ logger: true });
 require("dotenv").config();
+const imageUploadRoutes = require("./utils/imageUpload");
 
 // Register Plugins
 fastify.register(require("./plugins/db"));
+fastify.register(require('@fastify/multipart'));
 
 // Register Routes
 fastify.register(require("./routes/user.routes"));
 fastify.register(require('./routes/food.routes'));
+fastify.register(require('./routes/order.routes'));
+fastify.register(imageUploadRoutes);
 
 
 // Start Server

@@ -12,13 +12,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@fastify/multipart": "^9.0.3",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
     "faker": "^6.6.6",
-    "fastify": "^5.3.3",
+    "fastify": "^5.4.0",
     "fastify-plugin": "^5.0.1",
+    "imagekit": "^6.0.0",
     "mongodb": "^6.17.0",
-    "mongoose": "^8.15.1"
+    "mongoose": "^8.15.1",
+    "multer": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
