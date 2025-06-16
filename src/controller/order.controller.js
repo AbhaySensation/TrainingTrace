@@ -1,5 +1,6 @@
 const Order = require("../models/order.modal");
 const Product = require("../models/product.model");
+const imagekit = require("../plugins/Imagekit");
 
 // Create new order
 const createOrder = async (req, reply) => {
