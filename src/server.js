@@ -5,7 +5,11 @@ const imageUploadRoutes = require("./utils/imageUpload");
 
 // Register Plugins
 fastify.register(require("./plugins/db"));
-fastify.register(require('@fastify/multipart'));
+fastify.register(require('@fastify/multipart'),{
+    limits: {
+    fileSize: 100 * 1024 * 1024 // 100 MB, adjust as needed
+  }
+});
 
 // Register Routes
 fastify.register(require("./routes/user.routes"));
