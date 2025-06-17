@@ -5,6 +5,7 @@ async function orderRoute(fastify, options) {
 fastify.post('/orders' , orderController.createOrder);
 fastify.get('/orders', orderController.getAllOrders);
 fastify.get('/orders/user/:userId', orderController.getUserOrders);
+fastify.post('/orders/user/:userId/search', orderController.searchOrder);
 fastify.delete('/orders/:orderId', orderController.deleteUserOrders);
 }
 

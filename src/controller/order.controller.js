@@ -73,7 +73,6 @@ const createOrder = async (req, reply) => {
   }
 };
 
-
 // Get all orders
 const getAllOrders = async (req, reply) => {
   try {
@@ -101,6 +100,25 @@ const getUserOrders = async (req, reply) => {
     reply.code(500).send({ error: "Server error", details: err.message });
   }
 };
+const searchOrder = async (req, reply) => {
+  try {
+    const { userId } = req.params;
+    const {q}=req.query
+
+    const orders = await Order.find({ user: userId })
+      .populate("products")
+      .populate("user", "fullname username email");
+         const allProducts = orders.flatMap(order => order.products);
+
+    const regex = new RegExp(q, 'i');
+    const filteredProducts = allProducts.filter(product =>
+      regex.test(product.name) || regex.test(product.description)
+    );
+    reply.send(filteredProducts);
+  } catch (err) {
+    reply.code(500).send({ error: "Server error", details: err.message });
+  }
+};
 const deleteUserOrders = async (req, reply) => {
   try {
     const { orderId } = req.params;
@@ -117,17 +135,19 @@ const deleteUserOrders = async (req, reply) => {
       return reply.code(404).send({ error: "Order not found" });
     }
 
-    reply.code(200).send({ message: "Order deleted successfully", order: deletedOrder });
+    reply
+      .code(200)
+      .send({ message: "Order deleted successfully", order: deletedOrder });
   } catch (err) {
     console.error("Delete order error:", err);
     reply.code(500).send({ error: "Server error", details: err.message });
   }
 };
 
-
 module.exports = {
   createOrder,
   getAllOrders,
   getUserOrders,
-  deleteUserOrders
+  deleteUserOrders,
+  searchOrder
 };

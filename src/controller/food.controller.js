@@ -33,7 +33,6 @@ const getProduct = async (req, reply) => {
     if (!subcategoryId) {
       return reply.code(400).send({ error: "Missing subcategory query parameter" });
     }
-
     const products = await Product.find({ subcategory: subcategoryId },{ name: 1, description: 1, price: 1 }).lean();
 
     reply.send(products);
