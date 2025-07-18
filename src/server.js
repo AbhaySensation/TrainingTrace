@@ -23,15 +23,17 @@ fastify.register(imageUploadRoutes);
 
 
 // Start Server
-const start = async () => {
-  try {
-   const res = await fastify.listen({ port:  3000, host: '0.0.0.0' });
-    console.log("successfully conneted to port  ", res);
-  } catch (err) {
-    console.log("Failed to register");
-    fastify.log.error(err);
-    process.exit(1);
-  }
-};
+// const start = async () => {
+//   try {
+//    const res = await fastify.listen({ port:  3000, host: '0.0.0.0' });
+//     console.log("successfully conneted to port  ", res);
+//   } catch (err) {
+//     console.log("Failed to register");
+//     fastify.log.error(err);
+//     process.exit(1);
+//   }
+// };
 
-start();
+// start();
+
+module.exports = fastify;
