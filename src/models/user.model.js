@@ -32,6 +32,31 @@ const UserSchema = new mongoose.Schema(
       type: String,
       match: [/^\+?[1-9]\d{7,14}$/, "Please enter a valid phone number"],
     },
+
+cart: [
+  {
+    itemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true
+    },
+    itemType: {
+      type: String,
+      enum: ['Product', 'Bean', 'Coffee'],
+      required: true
+    },
+    quantity: {
+      type: Number,
+      default: 1,
+      min: 1
+    },
+    addedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }
+]
+
+
   },
   {
     timestamps: true,

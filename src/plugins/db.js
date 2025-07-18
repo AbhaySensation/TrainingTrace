@@ -17,3 +17,4 @@ async function dbConnector(fastify, options) {
 }
 
 module.exports = fp(dbConnector);
+ 
