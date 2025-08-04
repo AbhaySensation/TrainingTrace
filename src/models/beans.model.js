@@ -25,7 +25,7 @@ const BeansDataSchema = new mongoose.Schema(
         data: Buffer,
         contentType: String,
     },
-
+imageUrl:String,
 
 
     ingredients: {

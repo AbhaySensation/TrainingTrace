@@ -14,6 +14,7 @@ const CoffeeDataSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    imageUrl: String,
     imagelink_square: {
         data: Buffer,
         contentType: String,

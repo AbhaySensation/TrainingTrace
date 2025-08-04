@@ -33,6 +33,11 @@ const UserSchema = new mongoose.Schema(
       match: [/^\+?[1-9]\d{7,14}$/, "Please enter a valid phone number"],
     },
 
+    profile_pic:{
+        type:String,
+        default: null,
+    },
+
 cart: [
   {
     itemId: {
@@ -54,7 +59,11 @@ cart: [
       default: Date.now
     }
   }
-]
+],
+
+
+
+
 
 
   },

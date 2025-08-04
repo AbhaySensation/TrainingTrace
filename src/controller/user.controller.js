@@ -4,6 +4,7 @@ const ProductModel = require("../models/product.model")
 const BeanModel = require('../models/beans.model')
 const CoffeeModel = require('../models/coffeeData.model');
 const userModel = require("../models/user.model");
+const imagekit = require("../plugins/Imagekit");
 // tokenGen Function Start ---------
 
 function tokengen(email) {
@@ -26,9 +27,12 @@ function tokengen(email) {
 // Register a new user
 const registerUser = async (req, reply) => {
   try {
-    const { fullname, username, email, password, phoneNumber } = req.body;
 
-    // Basic validation
+    console.log("Body:", req.body);
+console.log("File:", req.file);
+    
+    console.log("this is working here from the route");
+    const { fullname, username, email, password, phoneNumber } = req.body;
     const errors = {};
 
     if (!fullname) errors.fullname = "Full name is required";
@@ -37,20 +41,32 @@ const registerUser = async (req, reply) => {
     if (!password) errors.password = "Password is required";
 
     if (Object.keys(errors).length > 0) {
-      return reply
-        .code(400)
-        .send({ error: "Validation failed", fields: errors });
+      return reply.code(400).send({ error: "Validation failed", fields: errors });
     }
 
-    // Check if user/email already exists
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return reply
-        .code(400)
-        .send({ error: "User with given email or username already exists" });
+      return reply.code(400).send({ error: "User with given email or username already exists" });
     }
 
-    const user = new User({ fullname, username, email, password, phoneNumber });
+    let profilePicUrl = null;
+    if (req.file) {
+      const uploadResult = await imagekit.upload({
+        file: req.file.buffer.toString("base64"),
+        fileName: req.file.originalname,
+      });
+      profilePicUrl = uploadResult.url;
+    }
+
+    // Save new user
+    const user = new User({
+      fullname,
+      username,
+      email,
+      password,
+      phoneNumber,
+      profile_pic: profilePicUrl,
+    });
     await user.save();
 
     const token = tokengen(email);
@@ -63,6 +79,7 @@ const registerUser = async (req, reply) => {
         fullname: user.fullname,
         username: user.username,
         email: user.email,
+        profilePic: profilePicUrl,
       },
     });
   } catch (err) {
@@ -156,7 +173,7 @@ const verifyToken = async (req, reply, next) => {
 };
 
 const addtocart = async (req, reply) => {
-  const user = req.user;
+  const userId = req.user;
   
   const { itemId, itemType } = req.body;
 
@@ -197,8 +214,6 @@ const addtocart = async (req, reply) => {
       },
       { new: true }
     );
-
-    // If no such item, push it to cart
     if (!updatedUser) {
       await userModel.findByIdAndUpdate(userId, {
         $push: { cart: { itemId, itemType, quantity: 1 } },
@@ -217,6 +232,31 @@ const addtocart = async (req, reply) => {
 
 
 
+const getUser = async (req, reply) => {
+  try {
+    const { id } = req.params; // ✅ extract id from route params
+
+    if (!id) {
+      return reply.code(400).send({ error: "User ID not provided" });
+    }
+
+    const user = await User.findById(id).select("-password"); // ✅ find by MongoDB _id
+
+    if (!user) {
+      return reply.code(404).send({ error: "User not found" });
+    }
+
+    reply.send(user);
+  } catch (err) {
+    reply
+      .code(500)
+      .send({ error: "Failed to fetch user", details: err.message });
+  }
+};
+
+
+
+
 
 module.exports = {
   registerUser,
@@ -224,4 +264,5 @@ module.exports = {
   getAllUsers,
   verifyToken,
   addtocart,
+  getUser,
 };
