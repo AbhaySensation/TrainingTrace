@@ -1,36 +1,29 @@
 const User = require("../models/user.model");
-const jwt = require('jsonwebtoken')
-const ProductModel = require("../models/product.model")
-const BeanModel = require('../models/beans.model')
-const CoffeeModel = require('../models/coffeeData.model');
+const jwt = require("jsonwebtoken");
+const ProductModel = require("../models/product.model");
+const BeanModel = require("../models/beans.model");
+const CoffeeModel = require("../models/coffeeData.model");
 const userModel = require("../models/user.model");
 const imagekit = require("../plugins/Imagekit");
 // tokenGen Function Start ---------
 
 function tokengen(email) {
-  const key = "thisistehsecretKey"
+  const key = "thisistehsecretKey";
   const payload = { email };
   const option = { expiresIn: "7d" };
-  const token = jwt.sign(payload, process.env.JWT_KEY || key, option)
+  const token = jwt.sign(payload, process.env.JWT_KEY || key, option);
 
   return token;
 }
 
 // tokenGen Function end -----------
 
-
-
-
-
-
-
 // Register a new user
 const registerUser = async (req, reply) => {
   try {
-
     console.log("Body:", req.body);
-console.log("File:", req.file);
-    
+    console.log("File:", req.file);
+
     console.log("this is working here from the route");
     const { fullname, username, email, password, phoneNumber } = req.body;
     const errors = {};
@@ -41,12 +34,16 @@ console.log("File:", req.file);
     if (!password) errors.password = "Password is required";
 
     if (Object.keys(errors).length > 0) {
-      return reply.code(400).send({ error: "Validation failed", fields: errors });
+      return reply
+        .code(400)
+        .send({ error: "Validation failed", fields: errors });
     }
 
     const existingUser = await User.findOne({ $or: [{ email }, { username }] });
     if (existingUser) {
-      return reply.code(400).send({ error: "User with given email or username already exists" });
+      return reply
+        .code(400)
+        .send({ error: "User with given email or username already exists" });
     }
 
     let profilePicUrl = null;
@@ -87,10 +84,7 @@ console.log("File:", req.file);
   }
 };
 
-
-
 // !!=----------Login User ---------------=!!
-
 
 const loginUser = async (req, reply) => {
   try {
@@ -115,7 +109,6 @@ const loginUser = async (req, reply) => {
       return reply.code(401).send({ error: "Invalid credentials" });
     }
     const token = tokengen(email);
-
 
     reply.send({
       message: "Login successful",
@@ -144,37 +137,38 @@ const getAllUsers = async (req, reply) => {
   }
 };
 
-
-// !! to check if the user is Authentic !! // 
-
+// !! to check if the user is Authentic !! //
 
 const verifyToken = async (req, reply, next) => {
   const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    return reply.code(401).send({ type: false, msg: 'No token provided' });
+    return reply.code(401).send({ type: false, msg: "No token provided" });
   }
 
-  const key = "thisistehsecretKey"
+  const key = "thisistehsecretKey";
   try {
     const decoded = jwt.verify(token, process.env.JWT_KEY || key);
     console.log(decoded);
 
-    
     const user = await User.findOne({ email: decoded.email });
     if (!user) {
-      return reply.code(401).send({ type: false, msg: 'User no longer exists' });
+      return reply
+        .code(401)
+        .send({ type: false, msg: "User no longer exists" });
     }
     req.user = user;
     next();
   } catch (err) {
-    return reply.code(403).send({ type: false, msg: 'Invalid or expired token' });
+    return reply
+      .code(403)
+      .send({ type: false, msg: "Invalid or expired token" });
   }
 };
 
 const addtocart = async (req, reply) => {
   const userId = req.user;
-  
+
   const { itemId, itemType } = req.body;
 
   if (!itemId || !itemType) {
@@ -182,18 +176,13 @@ const addtocart = async (req, reply) => {
   }
 
   let Model;
-  if (itemType === 'Product') {
+  if (itemType === "Product") {
     Model = ProductModel;
-  }
-
-  else if (itemType === 'Bean') {
+  } else if (itemType === "Bean") {
     Model = BeanModel;
-  }
-  else if (itemType === 'Coffee') {
-
+  } else if (itemType === "Coffee") {
     Model = CoffeeModel;
-  }
-  else {
+  } else {
     return reply.code(400).send("Invalid itemType");
   }
 
@@ -202,8 +191,8 @@ const addtocart = async (req, reply) => {
     if (!item) {
       return reply.code(404).send("Item not found");
     }
-    
-     const updatedUser = await userModel.findOneAndUpdate(
+
+    const updatedUser = await userModel.findOneAndUpdate(
       {
         _id: user._id,
         "cart.itemId": itemId,
@@ -221,16 +210,10 @@ const addtocart = async (req, reply) => {
     }
 
     return reply.code(200).send({ type: true, msg: "Item added to cart" });
-
-  } 
-  
-  catch(err) {
-    return reply.code(500).send("Server Errorrrrr"+err);
+  } catch (err) {
+    return reply.code(500).send("Server Errorrrrr" + err);
   }
 };
-
-
-
 
 const getUser = async (req, reply) => {
   try {
@@ -253,10 +236,6 @@ const getUser = async (req, reply) => {
       .send({ error: "Failed to fetch user", details: err.message });
   }
 };
-
-
-
-
 
 module.exports = {
   registerUser,
